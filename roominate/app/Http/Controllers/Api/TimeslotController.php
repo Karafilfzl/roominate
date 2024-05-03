@@ -60,3 +60,4 @@ class TimeslotController extends Controller
         $timeslot->delete();
         return response()->json(['message' => 'Timeslot deleted']);
     }
+}
