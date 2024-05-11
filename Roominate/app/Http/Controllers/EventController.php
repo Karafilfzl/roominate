@@ -1,5 +1,4 @@
 <?php
-// Inside app/Http/Controllers/EventController.php
 
 namespace App\Http\Controllers;
 

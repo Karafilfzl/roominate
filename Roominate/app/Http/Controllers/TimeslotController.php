@@ -1,7 +1,5 @@
 <?php
 
-// Inside app/Http/Controllers/TimeslotController.php
-
 namespace App\Http\Controllers;
 
 use App\Models\Timeslot;

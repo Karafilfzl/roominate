@@ -1,5 +1,4 @@
 <?php
-// Inside app/Http/Controllers/BuildingController.php
 
 namespace App\Http\Controllers;
 

@@ -1,5 +1,4 @@
 <?php
-// Inside app/Http/Controllers/RoomController.php
 
 namespace App\Http\Controllers;
 
