@@ -12,6 +12,10 @@ use App\Http\Controllers\TimeslotController;
 use App\Http\Controllers\EventController;
 use App\Models\User;
 
+// Registers a new user
+Route::post('/register', [UserController::class, 'store']);
+
+// Authenticates a user and issues a token
 Route::post('/auth/token', function (Request $request) {
     $request->validate([
         'email' => 'required|email',
@@ -34,32 +38,33 @@ Route::post('/auth/token', function (Request $request) {
         'user' => $user->email
     ]);
 });
-Route::post('/register', [UserController::class, 'store']);
 
+// Grouping protected routes
 Route::middleware('auth:sanctum')->group(function (){
     // Retrieve user information
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
 
-    // User routes
-    Route::apiResource('users', UserController::class);
+    // Admin specific routes
+    Route::group(['middleware' => ['role:admin']], function() {
+        Route::apiResource('users', UserController::class);
+    });
 
-    // Building routes
-    Route::apiResource('buildings', BuildingController::class);
+    // Accessible to users with 'manage buildings' permission
+    Route::group(['middleware' => ['permission:manage buildings']], function() {
+        Route::apiResource('buildings', BuildingController::class);
+    });
 
-    // Room routes
+    // General user accessible routes
     Route::apiResource('rooms', RoomController::class);
-
-    // Reservation routes
     Route::apiResource('reservations', ReservationController::class);
-
-    // Course routes
     Route::apiResource('courses', CourseController::class);
-
-    // Timeslot routes
     Route::apiResource('timeslots', TimeslotController::class);
-
-    // Event routes
     Route::apiResource('events', EventController::class);
+});
+
+// Route not found
+Route::fallback(function(){
+    return response()->json(['message' => 'Route not found'], 404);
 });
