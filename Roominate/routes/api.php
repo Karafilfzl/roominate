@@ -46,6 +46,10 @@ Route::middleware('auth:sanctum')->group(function (){
         return $request->user();
     });
 
+    // Instead of using the use statement, directly use the full namespace in the route definition
+    Route::apiResource('reservations', '\App\Http\Controllers\ReservationController');
+
+
     // Admin specific routes
     Route::group(['middleware' => ['role:admin']], function() {
         Route::apiResource('users', UserController::class);
