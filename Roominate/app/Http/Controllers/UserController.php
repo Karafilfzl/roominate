@@ -20,22 +20,47 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'first_name' => 'required|max:255',
-            'last_name' => 'required|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
-            'role' => 'required'
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
+            'email' => 'required|string|email|unique:users',
+            'password' => 'required|string|min:6',
+            'role' => 'required|string'
         ]);
 
-        $user = User::create($validated);
-        return response()->json($user, 201);
+        try {
+            $user = User::create([
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'role' => $request->role
+            ]);
+
+            return response()->json(['message' => 'User successfully registered', 'user' => $user], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'User registration failed'], 400);
+        }
+        return response()->json(['message' => 'User created successfully.', 'data' => $user]);
     }
 
     public function update(Request $request, $id)
     {
         $user = User::findOrFail($id);
-        $user->update($request->all());
-        return response()->json($user, 200);
+    
+        $request->validate([
+            'email' => 'string|email|unique:users,email,' . $user->id,
+            'password' => 'sometimes|required|string|min:6'
+        ]);
+    
+        $user->fill($request->only(['first_name', 'last_name', 'email', 'role']));
+    
+        if ($request->has('password')) {
+            $user->password = Hash::make($request->password);
+        }
+    
+        $user->save();
+    
+        return response()->json($user);
     }
 
     public function destroy($id)
