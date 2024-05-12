@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('some-middleware')->except(['store']);
+    }
+     
     public function index()
     {
         return User::all();

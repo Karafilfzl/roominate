@@ -8,11 +8,12 @@ use Illuminate\Support\Facades\Auth;
 
 class EnsureUserRole
 {
-    public function handle(Request $request, Closure $next, ...$roles)
+    public function handle($request, Closure $next, $roles)
     {
-        if (!Auth::check() || !in_array(Auth::user()->role, $roles)) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+        if (! $request->user()-> hasRole($roles)) {
+            return response()->json(['message' => 'This action is unauthorized'], 403);
         }
+
         return $next($request);
     }
 }
